@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function me(uid) { return signedIn() && request.auth.uid == uid; }
+
+    match /users/{uid} {
+      allow read: if me(uid);
+      allow create: if me(uid);
+      allow update: if me(uid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName','photoUrl','updatedAt']);
+      allow delete: if false;
+
+      match /quizHistory/{historyId} {
+        allow read: if me(uid);
+        allow write: if false;
+      }
+    }
+
+    match /quizzes/{quizId} {
+      allow read: if signedIn();
+      allow write: if false;
+      match /questions/{questionId} {
+        allow read: if signedIn();
+        allow write: if false;
+      }
+      match /answers/{questionId} {
+        allow read, write: if false;
+      }
+    }
+
+    match /leaderboard/{uid} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    match /coinLedger/{id} {
+      allow read: if signedIn() && resource.data.uid == request.auth.uid;
+      allow write: if false;
+    }
+  }
+}

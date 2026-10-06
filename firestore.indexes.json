@@ -1,0 +1,7 @@
+{
+  "indexes": [
+    {"collectionGroup":"quizHistory","queryScope":"COLLECTION","fields":[{"fieldPath":"completedAt","order":"DESCENDING"}]},
+    {"collectionGroup":"leaderboard","queryScope":"COLLECTION","fields":[{"fieldPath":"lifetimeCoins","order":"DESCENDING"}]}
+  ],
+  "fieldOverrides": []
+}
